@@ -6,17 +6,19 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.vgg16 import preprocess_input
 
 import cfg
+import os
 from label import point_inside_of_quad
 from network import East
 from preprocess import resize_image
 from nms import nms
 
-# root_temp = 'demo/temp'
-# root_predict = 'demo/predict'
+root_temp = "data/ocr/temp/"
+root_predict = "data/ocr/predict/"
+
+print("当前的目录是:"+os.getcwd())
 
 
 def sigmoid(x):
-    """`y = 1 / (1 + exp(-x))`"""
     return 1 / (1 + np.exp(-x))
 
 
@@ -114,6 +116,12 @@ def predict_quad(model, img, pixel_threshold=cfg.pixel_threshold, quiet=False, i
         img_all: 一个思维数组，img_all[0] 是img_to_array的结果
 
     """
+
+    if not os.path.exists(root_temp):
+        os.makedirs(root_temp)
+    if not os.path.exists(root_predict):
+        os.makedirs(root_predict)
+
     # 获取计算后的图像长宽
     d_wight, d_height = resize_image(img, cfg.max_predict_img_size)
     # 调整图像大小，便于预测
@@ -173,7 +181,7 @@ def predict_quad(model, img, pixel_threshold=cfg.pixel_threshold, quiet=False, i
                           width=line_width, fill=line_color)
 
             if not img_name is None:
-                im.save(root_temp + img_name + '_%d_.jpg' % n)
+                im.save(root_temp + img_name + '.jpg')
 
             quad_draw = ImageDraw.Draw(quad_im)
             for score, geo, s in zip(quad_scores, quad_after_nms,
@@ -196,7 +204,7 @@ def predict_quad(model, img, pixel_threshold=cfg.pixel_threshold, quiet=False, i
                     print('quad invalid with vertex num less then 4.')
 
             if not img_name is None:
-                quad_im.save(root_predict + img_name + '_%d_.jpg' % n)
+                quad_im.save(root_predict + img_name + '.jpg' )
 
         for t in range(len(text_recs)):
             text_recs_all.append(text_recs[t])
@@ -248,20 +256,23 @@ def parse_args():
 
 
 if __name__ == '__main__':
+    root_temp = "../data/ocr/temp/"
+    root_predict = "../data/ocr/predict/"
     args = parse_args()
     img_path = args.path
     threshold = float(args.threshold)
     print(img_path, threshold)
-    # img = image.load_img(img_path)
+    img = image.load_img(img_path)
+    im_name = img_path.split('/')[-1][:-4]
     east = East()
     east_detect = east.east_network()
     east_detect.load_weights(cfg.saved_model_weights_file_path)
-    predict(east_detect, img_path, threshold)
-    # text_recs_all, text_recs_len, img_all = predict_quad(east_detect, img, img_name='001')
-    # print(text_recs_all)
-    # print("-------------------------")
-    # print(text_recs_len)
-    # print("-------------------------")
-    # print(img_all)
-    # img = image.array_to_img(img_all[0])
-    # img.show()
+    # predict(east_detect, img_path, threshold)
+    text_recs_all, text_recs_len, img_all = predict_quad(east_detect, img, img_name=im_name)
+    print(text_recs_all)
+    print("-------------------------")
+    print(text_recs_len)
+    print("-------------------------")
+    print(img_all)
+    img = image.array_to_img(img_all[0])
+    img.show()
