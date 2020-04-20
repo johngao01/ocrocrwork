@@ -109,6 +109,7 @@ def predict_text(model, recs_all, recs_len, img_all, img_name=None):
         os.makedirs(root_recs)
 
     img_index = 0
+    result = ''
 
     # fixme 当前是前面所有长度的和
     for i in range(len(recs_len)):
@@ -145,7 +146,10 @@ def predict_text(model, recs_all, recs_len, img_all, img_name=None):
 
         # 预测输出，解码成文字
         sim_pred = converter.decode(preds.data, preds_size.data, raw=False)
-        print('results: {0}'.format(sim_pred))
+        result += (format(sim_pred) +'\n')
+
+
+    print(result)
 
 
     #     scale = img_rec.size[1] * 1.0 / 32

@@ -3,7 +3,6 @@ import argparse
 from dect import cfg
 from dect.network import East
 from tensorflow.keras.preprocessing import image
-import os
 crnn_model_path = 'weights/crnn/netCRNN_4_48000.pth'
 dect_weights_path = 'weights/east/east_model_weights_3T640.h5'
 running_mode = 'gpu'
@@ -33,7 +32,7 @@ if __name__ == '__main__':
     threshold = args.threshold
     # img.show()
     im_name = img_path.split('/')[-1][:-4]
-    print(im_name)
+    # print(im_name)
     text_recs_all, text_recs_len, img_all = predict_quad(east_detect, img, img_name=im_name)
     # print("检测成功了")
     # print(img_all[0].shape)
