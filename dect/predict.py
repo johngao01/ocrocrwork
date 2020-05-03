@@ -254,8 +254,6 @@ def parse_args():
 
 
 if __name__ == '__main__':
-    root_temp = "../data/ocr/temp/"
-    root_predict = "../data/ocr/predict/"
     args = parse_args()
     img_path = args.path
     threshold = float(args.threshold)

@@ -2,8 +2,8 @@
 from tensorflow.keras import Input, Model
 from tensorflow.keras.applications.vgg16 import VGG16
 from tensorflow.keras.layers import Concatenate, Conv2D, UpSampling2D, BatchNormalization
-
-import cfg
+from tensorflow.keras.utils import plot_model
+import cfg,os
 
 """
 input_shape=(img.height, img.width, 3), height and width must scaled by 32.
@@ -77,6 +77,8 @@ class East:
 
 
 if __name__ == '__main__':
+    os.environ["PATH"] += os.pathsep + 'H:\Program Files (x86)\Graphviz2.38\\bin'
     east = East()
     east_network = east.east_network()
+    plot_model(east_network,'east_dect.png',show_shapes=True)
     east_network.summary()

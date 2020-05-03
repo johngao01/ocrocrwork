@@ -12,7 +12,6 @@ import Net.net as Net
 import numpy as np
 from math import *
 
-
 os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 
 root_recs = 'data/cutphoto/save/'
@@ -25,7 +24,6 @@ nclass = len(alphabet) + 1
 
 
 def dumpRotateImage(img, rec):
-
     xDim, yDim = img.shape[1], img.shape[0]
 
     # fixme 扩展文字白边 参数为经验值
@@ -48,7 +46,7 @@ def dumpRotateImage(img, rec):
 
     matRotation = cv2.getRotationMatrix2D((width / 2, height / 2), degree, 1)
     matRotation[0, 2] += (widthNew - width) / 2
-    matRotation[1, 2] += (heightNew - height) / 2   # fixme 扩展宽高 否则会被裁剪
+    matRotation[1, 2] += (heightNew - height) / 2
 
     imgRotation = cv2.warpAffine(
         img, matRotation, (widthNew, heightNew), borderValue=(255, 255, 255))
@@ -64,16 +62,17 @@ def dumpRotateImage(img, rec):
 
     pt1_N = []
     pt3_N = []
-    pt1_N.append(max(1, int(pt1[0]) ))
-    pt1_N.append(max(1, int(pt1[1]) ))
-    pt3_N.append(min(xdim - 1, int(pt3[0]) ))
-    pt3_N.append(min(ydim - 1, int(pt3[1]) ))
+    pt1_N.append(max(1, int(pt1[0])))
+    pt1_N.append(max(1, int(pt1[1])))
+    pt3_N.append(min(xdim - 1, int(pt3[0])))
+    pt3_N.append(min(ydim - 1, int(pt3[1])))
 
     imgRotation = np.uint8(imgRotation)
     img_rot = Image.fromarray(imgRotation)
     img_rec = img_rot.crop((pt1_N[0], pt1_N[1], pt3_N[0], pt3_N[1]))
 
     return img_rec
+
 
 def crnn_recognition(cropped_image, model):
     # 标签转换
@@ -146,64 +145,13 @@ def predict_text(model, recs_all, recs_len, img_all, img_name=None):
 
         # 预测输出，解码成文字
         sim_pred = converter.decode(preds.data, preds_size.data, raw=False)
-        result += (format(sim_pred) +'\n')
+        result += (format(sim_pred) + '\n')
 
-
-    print(result)
-
-
-    #     scale = img_rec.size[1] * 1.0 / 32
-    #     if not scale > 0:
-    #         continue
-    #
-    #     w = int(img_rec.size[0] / scale)
-    #
-    #     if not w > 0:
-    #         continue
-    #
-    #     img_rec = img_rec.resize((w, 32), Image.BILINEAR)
-    #     print(type(img_rec))
-    #     width_list.append(w)
-    #
-    #     #  增强图像对比度 提高识别
-    #     img_in = np.array(img_rec)
-    #     img_out = np.zeros(img_in.shape, np.uint8)
-    #     cv2.normalize(img_in, img_out, 255, 0, cv2.NORM_MINMAX, cv2.CV_8U)
-    #
-    #     # todo 根据顶点的线条比较反转
-    #     black = 0
-    #     for m in range(32):
-    #         if img_out[m, 0] < 100:
-    #             black += 1
-    #     for n in range(64 if w >= 64 else w):
-    #         if img_out[0, n] < 100:
-    #             black += 1
-    #     if black > (32 + (64 if w >= 64 else w)) // 2:
-    #         img_out = 255 - img_out
-    #
-    #     img_rec = img_out.astype(np.float32) / 255.0 - 0.5  # img_rec is array
-    #     print("----------")
-    #     Image.fromarray(img_rec).show()
-    #     img_list.append(img_rec)
-    #     print(img_list)
-    #
-    # width_max = max(width_list)
-    # X = np.zeros((len(width_list), 32, width_max, 1), dtype=np.float)
-    #
-    # for i in range(len(width_list)):
-    #     img_pad = np.zeros((32, width_max - width_list[i]), np.float32) + 0.5
-    #     img_rec = np.concatenate((img_list[i], img_pad), axis=1)
-    #     X[i] = np.expand_dims(img_rec, axis=2)
-    #
-    #     # fixme 保存裁剪后的图像
-    #     img_out = (img_rec + 0.5) * 255
-    #     img_sa = Image.fromarray(img_out.astype(np.int32))
-    #     img_sa.convert('RGB').save(root_recs + img_name + '_%d_.jpg' % i)
+    return result
 
 
 if __name__ == '__main__':
 
-    # crnn network
     model = Net.CRNN(nclass)
     if running_mode == 'gpu' and torch.cuda.is_available():
         model = model.cuda()
