@@ -122,49 +122,7 @@ class Ui_ui_ocr(object):
 
         # 这里开始添加了堆叠布局的第三页
         self.his_page = QtWidgets.QWidget()
-        self.instructions = QtWidgets.QLabel(self.his_page)
-        self.instructions.setGeometry(QtCore.QRect(230, 30, 521, 91))
-        font = QtGui.QFont()
-        font.setPointSize(20)
-        self.instructions.setFont(font)
-        self.instructions.setAlignment(QtCore.Qt.AlignCenter)
-        self.instructions.setObjectName("instructions")
-
-        db = pymysql.connect("localhost", "root", "123456", "ocrhis", charset='utf8')
-        # 获取游标、数据
-        cur = db.cursor()
-        cur.execute("SELECT * FROM his")
-        data = cur.fetchall()
-
-        # 数据列名
-        col_lst = ['序号', '文件路径', '识别时间', '识别结果']
-
-        # 数据的大小
-        row = len(data)
-        vol = len(data[0])
-
-        # 插入表格
-        self.histable = QTableWidget(row, vol, self.his_page)
-        self.histable.setGeometry(QtCore.QRect(100, 130, 821, 521))
-        font = QtGui.QFont('微软雅黑', 10)
-
-        # 设置字体、表头
-        self.histable.horizontalHeader().setFont(font)
-        self.histable.setHorizontalHeaderLabels(col_lst)
-        # 设置竖直方向表头不可见
-        self.histable.verticalHeader().setVisible(False)
-        self.histable.setFrameShape(QFrame.Box)
-
-        # 构建表格插入数据
-        for i in range(row):
-            for j in range(vol):
-                temp_data = data[i][j]  # 临时记录，不能直接插入表格
-                data1 = QTableWidgetItem(str(temp_data))  # 转换后可插入表格
-                self.histable.setItem(i, j, data1)
-        self.histable.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        self.histable.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        self.histable.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
-        self.histable.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
+        
         self.his_page.setObjectName("his_page")
         self.stackedWidget.addWidget(self.his_page)
         # 这里结束添加了堆叠布局的第三页
@@ -179,7 +137,7 @@ class Ui_ui_ocr(object):
         self.ocr.setText(_translate("ui_ocr", "文字识别"))
         self.his.setText(_translate("ui_ocr", "识别历史"))
         self.welcome.setText(_translate("ui_ocr", "欢迎使用OCR系统"))
-        self.instructions.setText(_translate("ui_ocr", "简单ocr识别记录，双击可复制单元格其内容"))
+        
         self.recoresult.setText(_translate("ui_ocr", "识别结果："))
         self.reco.setText(_translate("ui_ocr", "开始识别"))
         self.clean.setText(_translate("ui_ocr", "清除图片"))

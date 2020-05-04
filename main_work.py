@@ -1,5 +1,8 @@
+import pymysql
+import time
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QPixmap
 from ui_ocr import Ui_ui_ocr
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -9,6 +12,84 @@ from tensorflow.keras.preprocessing import image
 crnn_model_path = 'weights/crnn/netCRNN_4_48000.pth'
 dect_weights_path = 'weights/east/east_model_weights_3T640.h5'
 running_mode = 'gpu'
+
+
+def init_hispage(self):
+    # 初始化历史识别界面
+    self.instructions = QtWidgets.QLabel(self.his_page)
+    self.instructions.setGeometry(QtCore.QRect(230, 30, 521, 91))
+    font = QtGui.QFont()
+    font.setPointSize(20)
+    self.instructions.setFont(font)
+    self.instructions.setAlignment(QtCore.Qt.AlignCenter)
+    self.instructions.setObjectName("instructions")
+    self.instructions.setText("简单ocr识别记录，双击可复制单元格其内容")
+
+    db = pymysql.connect(
+        "localhost",
+        "root",
+        "123456",
+        "ocrhis",
+        charset='utf8')
+    # 获取游标、数据
+    cur = db.cursor()
+    cur.execute("SELECT * FROM his")
+    data = cur.fetchall()
+    # 数据列名
+    col_lst = ['序号', '文件路径', '识别时间', '识别结果']
+
+    # 数据的大小
+    row = len(data)  # 行
+    if row > 0:
+        vol = len(data[0])
+    else:
+        row = 0
+        vol = 4
+
+    # 插入表格
+    self.histable = QTableWidget(row, vol, self.his_page)
+    self.histable.setGeometry(QtCore.QRect(100, 130, 821, 521))
+    font = QtGui.QFont('微软雅黑', 10)
+
+    # 设置字体、表头
+    self.histable.horizontalHeader().setFont(font)
+    self.histable.setHorizontalHeaderLabels(col_lst)
+    # 设置竖直方向表头不可见
+    self.histable.verticalHeader().setVisible(False)
+    self.histable.setFrameShape(QFrame.Box)
+    # 构建表格插入数据
+    if row >= 1:
+        for i in range(row):
+            for j in range(vol):
+                temp_data = data[i][j]  # 临时记录，不能直接插入表格
+                data1 = QTableWidgetItem(str(temp_data))  # 转换后可插入表格
+                self.histable.setItem(i, j, data1)
+    db.close()
+
+    self.histable.horizontalHeader().setSectionResizeMode(
+        0, QHeaderView.ResizeToContents)
+    self.histable.horizontalHeader().setSectionResizeMode(
+        2, QHeaderView.ResizeToContents)
+    self.histable.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+    self.histable.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
+
+
+def addhis(path, txt):
+    db = pymysql.connect(
+        "localhost",
+        "root",
+        "123456",
+        "ocrhis",
+        charset='utf8')
+    cursor = db.cursor()
+    currenttime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    try:
+        sql = "insert into his(filepath,recotime,result) values ('%s', '%s', '%s') " % (
+            path, currenttime, txt)
+        cursor.execute(sql)
+        db.commit()
+    except BaseException as e:
+        print(e)
 
 
 def dectAndReco(filepath):
@@ -71,7 +152,7 @@ class Main_window(QWidget, Ui_ui_ocr):
         self.stackedWidget.setCurrentIndex(1)
 
     def changetohis(self):
-        # 调到历史识别界面
+        init_hispage(self)
         self.stackedWidget.setCurrentIndex(2)
 
     def loadimg(self):
@@ -90,6 +171,8 @@ class Main_window(QWidget, Ui_ui_ocr):
             txt = dectAndReco(self.imgpath)
             print(txt)
             self.result_.setText(txt)
+            addhis(self.imgpath, txt)
+            print("识别和添加了记录")
 
     def cleanimg(self):
         self.imgpath = ''
