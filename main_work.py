@@ -23,7 +23,7 @@ def init_hispage(self):
     self.instructions.setFont(font)
     self.instructions.setAlignment(QtCore.Qt.AlignCenter)
     self.instructions.setObjectName("instructions")
-    self.instructions.setText("简单ocr识别记录，双击可复制单元格其内容")
+    self.instructions.setText("ocr识别记录")
 
     db = pymysql.connect(
         "localhost",
@@ -70,7 +70,8 @@ def init_hispage(self):
         0, QHeaderView.ResizeToContents)
     self.histable.horizontalHeader().setSectionResizeMode(
         2, QHeaderView.ResizeToContents)
-    self.histable.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+    self.histable.horizontalHeader().setSectionResizeMode(
+        1, QHeaderView.ResizeToContents)
     self.histable.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
 
 
@@ -150,10 +151,12 @@ class Main_window(QWidget, Ui_ui_ocr):
     def changetoocr(self):
         # 调到ocr识别界面
         self.stackedWidget.setCurrentIndex(1)
+        self.statusBar.showMessage("欢迎使用此OCR")
 
     def changetohis(self):
         init_hispage(self)
         self.stackedWidget.setCurrentIndex(2)
+        self.statusBar.showMessage("历史记录加载完成")
 
     def loadimg(self):
         fname, _ = QFileDialog.getOpenFileName(
@@ -162,6 +165,7 @@ class Main_window(QWidget, Ui_ui_ocr):
         self.imgsrc = QPixmap(fname).scaled(
             self.img_show.width(), self.img_show.height())
         self.img_show.setPixmap(self.imgsrc)
+        self.statusBar.showMessage("上传图片成功，图片路径："+fname)
 
     def beginreco(self):
         temp = ''
@@ -169,22 +173,23 @@ class Main_window(QWidget, Ui_ui_ocr):
             print(self.imgpath)
         else:
             txt = dectAndReco(self.imgpath)
-            print(txt)
             self.result_.setText(txt)
             addhis(self.imgpath, txt)
-            print("识别和添加了记录")
+            self.statusBar.showMessage("识别成功和添加记录成功")
+
 
     def cleanimg(self):
         self.imgpath = ''
         self.imgsrc = None
         self.img_show.clear()
+        self.statusBar.showMessage("清除图片成功")
 
     def copyresult(self):
         temp = ''
         if self.result_.text() == temp:
-            QMessageBox.information(
-                self, "提示", "还没有结果呢", QMessageBox.Yes)
+            self.statusBar.showMessage("无识别结果")
 
         else:
             clipboard = QApplication.clipboard()
             clipboard.setText(self.result_.text())
+            self.statusBar.showMessage("复制成功")

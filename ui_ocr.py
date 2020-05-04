@@ -8,8 +8,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QTableWidget, QFrame, QTableWidgetItem, QHeaderView
-import pymysql
+from PyQt5.QtWidgets import QMainWindow
+
 
 
 class Ui_ui_ocr(object):
@@ -122,11 +122,13 @@ class Ui_ui_ocr(object):
 
         # 这里开始添加了堆叠布局的第三页
         self.his_page = QtWidgets.QWidget()
-        
         self.his_page.setObjectName("his_page")
         self.stackedWidget.addWidget(self.his_page)
         # 这里结束添加了堆叠布局的第三页
 
+        self.statusBar = QtWidgets.QStatusBar(ui_ocr)
+        self.statusBar.setGeometry(0, 770, 800, 30)
+        self.statusBar.setObjectName("statusbar")
         self.retranslateUi(ui_ocr)
         self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(ui_ocr)
@@ -137,7 +139,6 @@ class Ui_ui_ocr(object):
         self.ocr.setText(_translate("ui_ocr", "文字识别"))
         self.his.setText(_translate("ui_ocr", "识别历史"))
         self.welcome.setText(_translate("ui_ocr", "欢迎使用OCR系统"))
-        
         self.recoresult.setText(_translate("ui_ocr", "识别结果："))
         self.reco.setText(_translate("ui_ocr", "开始识别"))
         self.clean.setText(_translate("ui_ocr", "清除图片"))

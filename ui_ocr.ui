@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1300</width>
-    <height>800</height>
+    <height>803</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,14 +88,14 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>20</y>
+      <x>290</x>
+      <y>30</y>
       <width>1011</width>
       <height>721</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="page">
      <widget class="QLabel" name="welcome">
@@ -255,7 +255,40 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="his_page"/>
+    <widget class="QWidget" name="his_page">
+     <widget class="QTableView" name="tableView">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>130</y>
+        <width>821</width>
+        <height>521</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>30</y>
+        <width>521</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>宋体</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>简单ocr识别记录，双击可复制其内容</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
