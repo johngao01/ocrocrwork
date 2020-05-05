@@ -62,10 +62,23 @@ def init_hispage(self):
         for i in range(row):
             for j in range(vol):
                 temp_data = data[i][j]  # 临时记录，不能直接插入表格
-                data1 = QTableWidgetItem(str(temp_data))  # 转换后可插入表格
-                self.histable.setItem(i, j, data1)
+                if j == 1:
+                    data1 = QPushButton(str(temp_data))
+                    data1.clicked.connect(self.viewimg)
+                    data1.setAutoFillBackground(True)
+                    self.histable.setCellWidget(i, j, data1)
+                else:
+                    data1 = QTableWidgetItem(str(temp_data))  # 转换后可插入表格
+                    if j != 3:
+                        data1.setFlags(
+                            QtCore.Qt.ItemIsEnabled)
+                        self.histable.setItem(i, j, data1)
+                    else:
+                        self.histable.setItem(i, j, data1)
+    self.histable.doubleClicked.connect(self.sync_table_double_clicked)
     db.close()
 
+    # self.histable.setLineWidth(200)
     self.histable.horizontalHeader().setSectionResizeMode(
         0, QHeaderView.ResizeToContents)
     self.histable.horizontalHeader().setSectionResizeMode(
@@ -91,6 +104,8 @@ def addhis(path, txt):
         db.commit()
     except BaseException as e:
         print(e)
+    cursor.close()
+    db.close()
 
 
 def dectAndReco(filepath):
@@ -147,6 +162,14 @@ class Main_window(QWidget, Ui_ui_ocr):
         self.copyget.clicked.connect(self.copyresult)
         self.ocr.clicked.connect(self.changetoocr)
         self.his.clicked.connect(self.changetohis)
+        self.logo.clicked.connect(self.changetowelcome)
+
+
+
+    def changetowelcome(self):
+        self.stackedWidget.setCurrentIndex(0)
+        self.statusBar.showMessage("OCR Design by gzp")
+
 
     def changetoocr(self):
         # 调到ocr识别界面
@@ -167,10 +190,16 @@ class Main_window(QWidget, Ui_ui_ocr):
         self.img_show.setPixmap(self.imgsrc)
         self.statusBar.showMessage("上传图片成功，图片路径："+fname)
 
+    def sync_table_double_clicked(self, index):
+        table_column = index.column()
+        table_row = index.row()
+
+
+
     def beginreco(self):
         temp = ''
         if self.imgpath == temp:
-            print(self.imgpath)
+            pass
         else:
             txt = dectAndReco(self.imgpath)
             self.result_.setText(txt)
@@ -193,3 +222,13 @@ class Main_window(QWidget, Ui_ui_ocr):
             clipboard = QApplication.clipboard()
             clipboard.setText(self.result_.text())
             self.statusBar.showMessage("复制成功")
+
+
+    def viewimg(self):
+        pass
+
+
+
+
+
+

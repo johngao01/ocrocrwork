@@ -8,7 +8,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow
+
+from PyQt5.QtGui import QPixmap
 
 
 
@@ -24,20 +25,24 @@ class Ui_ui_ocr(object):
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.line_2 = QtWidgets.QFrame(self.ocr_ui)
-        self.line_2.setGeometry(QtCore.QRect(40, 130, 151, 16))
+        self.line_2.setGeometry(QtCore.QRect(40, 177, 151, 16))
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
         self.ocr = QtWidgets.QPushButton(self.ocr_ui)
-        self.ocr.setGeometry(QtCore.QRect(10, 170, 211, 101))
+        self.ocr.setGeometry(QtCore.QRect(10, 210, 211, 101))
         self.ocr.setIconSize(QtCore.QSize(16, 16))
         self.ocr.setObjectName("ocr")
         self.his = QtWidgets.QPushButton(self.ocr_ui)
-        self.his.setGeometry(QtCore.QRect(10, 300, 211, 101))
+        self.his.setGeometry(QtCore.QRect(10, 340, 211, 101))
         self.his.setObjectName("his")
-        self.logo = QtWidgets.QLabel(self.ocr_ui)
-        self.logo.setGeometry(QtCore.QRect(40, 20, 151, 101))
-        self.logo.setText("")
+
+        self.logo = QtWidgets.QPushButton(self.ocr_ui)
+        self.logo.setGeometry(QtCore.QRect(40, 20, 151, 148))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("data/logo.jpg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.logo.setIconSize(QtCore.QSize(151, 148))
+        self.logo.setIcon(icon)
         self.logo.setObjectName("logo")
         self.stackedWidget = QtWidgets.QStackedWidget(self.ocr_ui)
         self.stackedWidget.setGeometry(QtCore.QRect(260, 20, 1011, 721))
