@@ -5,7 +5,6 @@ from dect.network import East
 from tensorflow.keras.preprocessing import image
 crnn_model_path = 'weights/crnn/netCRNN_4_48000.pth'
 dect_weights_path = 'weights/east/east_model_weights_3T640.h5'
-running_mode = 'gpu'
 
 
 def parse_args():
@@ -48,15 +47,12 @@ if __name__ == '__main__':
     alphabet = alphabets.alphabet
     nclass = len(alphabet) + 1
     crnn_model = net.CRNN(nclass)
-    if running_mode == 'gpu' and torch.cuda.is_available():
-        model = crnn_model.cuda()
-        model.load_state_dict(torch.load(crnn_model_path))
-    else:
-        crnn_model.load_state_dict(torch.load(crnn_model_path, map_location='cpu'))
+
+    crnn_model.load_state_dict(torch.load(crnn_model_path, map_location='cpu'))
 
     if len(text_recs_all) > 0:
         texts = predict_text(crnn_model, text_recs_all, text_recs_len, img_all, img_name=im_name)
 
-    print("done")
+    print(texts+"\ndone")
 
 

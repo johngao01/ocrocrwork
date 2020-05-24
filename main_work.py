@@ -11,7 +11,6 @@ from dect.network import East
 from tensorflow.keras.preprocessing import image
 crnn_model_path = 'weights/crnn/netCRNN_4_48000.pth'
 dect_weights_path = 'weights/east/east_model_weights_3T640.h5'
-running_mode = 'gpu'
 
 
 def init_hispage(self):
@@ -124,11 +123,7 @@ def dectAndReco(filepath):
     alphabet = alphabets.alphabet
     nclass = len(alphabet) + 1
     crnn_model = net.CRNN(nclass)
-    if running_mode == 'gpu' and torch.cuda.is_available():
-        model = crnn_model.cuda()
-        model.load_state_dict(torch.load(crnn_model_path))
-    else:
-        crnn_model.load_state_dict(
+    crnn_model.load_state_dict(
             torch.load(
                 crnn_model_path,
                 map_location='cpu'))
@@ -140,7 +135,6 @@ def dectAndReco(filepath):
             text_recs_len,
             img_all,
             img_name=im_name)
-
     return texts
 
 

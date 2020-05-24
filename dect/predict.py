@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 from PIL import Image, ImageDraw
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.vgg16 import preprocess_input
+from tensorflow.keras.applications import imagenet_utils
 
 import cfg
 import os
@@ -41,7 +41,7 @@ def predict(east_detect, img_path, pixel_threshold, quiet=False):
     img = img.resize((d_wight, d_height), Image.NEAREST).convert('RGB')
     img = image.img_to_array(img)
     # 将张量的值 调到【-1 1】
-    img = preprocess_input(img, mode='tf')
+    img = imagenet_utils.preprocess_input(img,mode='tf')
     # 变成4维张量
     x = np.expand_dims(img, axis=0)
     y = east_detect.predict(x)
@@ -131,7 +131,7 @@ def predict_quad(model, img, pixel_threshold=cfg.pixel_threshold, quiet=False, i
     img_all[0] = img
 
     # 将张量的数值大小调到【-1 1】
-    img_ori = preprocess_input(img, mode='tf')  # suit tf tensor
+    img_ori = imagenet_utils.preprocess_input(img, mode='tf')  # suit tf tensor
 
     # 又整个一样的
     x = np.zeros((num_img, d_height, d_wight, 3))

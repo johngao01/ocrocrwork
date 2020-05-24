@@ -130,8 +130,6 @@ def predict_text(model, recs_all, recs_len, img_all, img_name=None):
         w = int(image.size[0] / (280 * 1.0 / Config.infer_img_w))
         transformer = lib.dataset.resizeNormalize((w, Config.img_height))
         image = transformer(image)
-        if torch.cuda.is_available():
-            image = image.cuda()
         image = image.view(1, *image.size())
         image = Variable(image)
 
