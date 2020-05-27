@@ -111,7 +111,7 @@ def predict_quad(model, img, pixel_threshold=cfg.pixel_threshold, quiet=False, i
     Returns:
         text_recs_all：一个列表，每个元素是检测边界的quad值
         text_recs_len：text_recs_all的长度，一共检测到多少个区域
-        img_all: 一个思维数组，img_all[0] 是img_to_array的结果
+        img_all: 一个四维数组，img_all[0] 是img_to_array的结果
 
     """
 
@@ -218,7 +218,7 @@ def predict_txt(east_detect, img_path, txt_path, pixel_threshold, quiet=False):
     scale_ratio_h = d_height / img.height
     img = img.resize((d_wight, d_height), Image.NEAREST).convert('RGB')
     img = image.img_to_array(img)
-    img = preprocess_input(img, mode='tf')
+    img = imagenet_utils.preprocess_input(img, mode='tf')
     x = np.expand_dims(img, axis=0)
     y = east_detect.predict(x)
 

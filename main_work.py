@@ -74,7 +74,6 @@ def init_hispage(self):
                         self.histable.setItem(i, j, data1)
                     else:
                         self.histable.setItem(i, j, data1)
-    self.histable.doubleClicked.connect(self.sync_table_double_clicked)
     db.close()
 
     # self.histable.setLineWidth(200)

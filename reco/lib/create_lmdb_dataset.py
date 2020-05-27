@@ -1,12 +1,11 @@
-
+# use python 2.7 to generate
 import lmdb
 import cv2
 import numpy as np
 import os
-
-OUT_PATH = '/home/ljs/OCR_dataset/CRNN_DATA/test_lmdb'
-IN_PATH = '/home/ljs/OCR_dataset/CRNN_DATA/images/360_test.txt'
-PREFIX = '/home/ljs/OCR_dataset/CRNN_DATA/images'
+OUT_PATH = '/test_lmdb'
+IN_PATH = 'D:\\pythonproject\\ocrwork\\out\\labels.txt'
+PREFIX = 'D:\\pythonproject\\ocrwork\\out'
 
 
 def checkImageIsValid(imageBin):
@@ -30,7 +29,7 @@ def writeCache(env, cache):
             txn.put(k, v)
 
 
-def createDataset(outputPath, imagePathList, labelList, lexiconList=None, checkValid=True):
+def createDataset(outputPath, imagePathList, labelList, lexiconList=None, checkValid=False):
     """
     Create LMDB dataset for CRNN training.
     ARGS:
@@ -42,7 +41,7 @@ def createDataset(outputPath, imagePathList, labelList, lexiconList=None, checkV
     """
     assert (len(imagePathList) == len(labelList))
     nSamples = len(imagePathList)
-    env = lmdb.open(outputPath, map_size=1099511627776)
+    env = lmdb.open(outputPath, map_size=5511627776)
     cache = {}
     cnt = 1
     for i in range(nSamples):

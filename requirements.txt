@@ -1,0 +1,11 @@
+PyMySQL==0.9.3
+torch==1.5.0+cu101
+tqdm==4.46.0
+tensorflow==2.1.0
+six==1.15.0
+torchvision==0.6.0+cu101
+lmdb==0.98
+numpy==1.18.4
+opencv_python==4.2.0.34
+Pillow==7.1.2
+PyQt5==5.14.2
