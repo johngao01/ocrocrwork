@@ -78,3 +78,8 @@ class CRNN(torch.nn.Module):
         x = self.rnn(x)
         # print(x.size())  # (22, 64, 6736)
         return x
+
+
+if __name__ == '__main__':
+    model = CRNN(5000)
+    print(model)

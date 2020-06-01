@@ -1,8 +1,8 @@
 import alphabets
 
 raw_folder = ''
-train_data = './data/train_lmdb'
-test_data = './data/test_lmdb'
+train_data = 'train_lmdb/'
+test_data = 'test_lmdb/'
 random_sample = True
 random_seed = 1111
 using_cuda = True

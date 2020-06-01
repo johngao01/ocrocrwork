@@ -1,11 +1,8 @@
-# use python 2.7 to generate
-import lmdb
-import cv2
-import numpy as np
 import os
-OUT_PATH = '/test_lmdb'
-IN_PATH = 'D:\\pythonproject\\ocrwork\\out\\labels.txt'
-PREFIX = 'D:\\pythonproject\\ocrwork\\out'
+import lmdb  # install lmdb by "pip install lmdb"
+import cv2
+
+import numpy as np
 
 
 def checkImageIsValid(imageBin):
@@ -15,7 +12,7 @@ def checkImageIsValid(imageBin):
         imageBuf = np.fromstring(imageBin, dtype=np.uint8)
         img = cv2.imdecode(imageBuf, cv2.IMREAD_GRAYSCALE)
         imgH, imgW = img.shape[0], img.shape[1]
-    except:
+    except BaseException:
         return False
     else:
         if imgH * imgW == 0:
@@ -26,10 +23,11 @@ def checkImageIsValid(imageBin):
 def writeCache(env, cache):
     with env.begin(write=True) as txn:
         for k, v in cache.items():
-            txn.put(k, v)
+            txn.put(str(k).encode(), str(v).encode())
 
 
-def createDataset(outputPath, imagePathList, labelList, lexiconList=None, checkValid=False):
+def createDataset(outputPath, imagePathList, labelList,
+                  lexiconList=None, checkValid=True):
     """
     Create LMDB dataset for CRNN training.
     ARGS:
@@ -41,19 +39,24 @@ def createDataset(outputPath, imagePathList, labelList, lexiconList=None, checkV
     """
     assert (len(imagePathList) == len(labelList))
     nSamples = len(imagePathList)
-    env = lmdb.open(outputPath, map_size=5511627776)
+    env = lmdb.open(outputPath, map_size=59511627776)
     cache = {}
     cnt = 1
     for i in range(nSamples):
-        imagePath = os.path.join(PREFIX, imagePathList[i]).split()[0].replace('\n', '').replace('\r\n', '')
-        print(imagePath)
+        imagePath = ''.join(
+            imagePathList[i]).split()[0].replace(
+            '\n',
+            '').replace(
+            '\r\n',
+            '')
+        # 将目录与文件名结合形成文件绝对路径
+        imagePath = r'D:\pythonproject\\temp\out\\' + imagePath
         label = ''.join(labelList[i])
-        print(label)
-        # if not os.path.exists(imagePath):
-        #     print('%s does not exist' % imagePath)
-        #     continue
+        if not os.path.exists(imagePath):
+            print('%s does not exist' % imagePath)
+            continue
 
-        with open(imagePath, 'r') as f:
+        with open(imagePath, 'rb') as f:
             imageBin = f.read()
 
         if checkValid:
@@ -80,12 +83,10 @@ def createDataset(outputPath, imagePathList, labelList, lexiconList=None, checkV
 
 
 if __name__ == '__main__':
-    outputPath = OUT_PATH
-    if not os.path.exists(OUT_PATH):
-        os.mkdir(OUT_PATH)
-    imgdata = open(IN_PATH)
+    outputPath = "train_lmdb/"
+    imgdata = open("out/labels.txt", encoding='utf-8')
     imagePathList = list(imgdata)
-
+    print(len(imagePathList))
     labelList = []
     for line in imagePathList:
         word = line.split()[1]

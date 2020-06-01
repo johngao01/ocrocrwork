@@ -1,6 +1,7 @@
 /.idea/
 __pycache__/
 /out/
-/test_lmdb/
+/reco/train_lmdb/
 /weights/
 /data/ocr/
+/reco/test_lmdb/
