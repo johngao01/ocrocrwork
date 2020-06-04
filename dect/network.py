@@ -3,12 +3,13 @@ from tensorflow.keras import Input, Model
 from tensorflow.keras.applications.vgg16 import VGG16
 from tensorflow.keras.layers import Concatenate, Conv2D, UpSampling2D, BatchNormalization
 from tensorflow.keras.utils import plot_model
-import cfg,os
+import cfg
+import os
 
 """
 input_shape=(img.height, img.width, 3), height and width must scaled by 32.
 So images's height and width need to be pre-processed to the nearest num that
-scaled by 32.And the annotations xy need to be scaled by the same ratio 
+scaled by 32.And the annotations xy need to be scaled by the same ratio
 as height and width respectively.
 """
 
@@ -77,8 +78,9 @@ class East:
 
 
 if __name__ == '__main__':
-    os.environ["PATH"] += os.pathsep + 'H:\Program Files (x86)\Graphviz2.38\\bin'
+    os.environ["PATH"] += os.pathsep + \
+        r'H:\Program Files (x86)\Graphviz2.38\\bin'
     east = East()
     east_network = east.east_network()
-    plot_model(east_network,'east_dect.png',show_shapes=True)
+    plot_model(east_network, 'east_dect.png', show_shapes=True)
     east_network.summary()

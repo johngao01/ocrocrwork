@@ -135,4 +135,4 @@ class alignCollate(object):
 
 
 def loadData(v, data):
-    v.data.resize_(data.size()).copy_(data)
+    v.resize_(data.size()).copy_(data)

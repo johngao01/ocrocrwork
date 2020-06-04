@@ -79,7 +79,32 @@ class CRNN(torch.nn.Module):
         # print(x.size())  # (22, 64, 6736)
         return x
 
+# count trainable parameters in model
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 if __name__ == '__main__':
     model = CRNN(5000)
     print(model)
+
+    # freeze some parameters
+    print(count_parameters(model))
+    for p in model.parameters():
+        p.requires_grad = False
+    print(count_parameters(model))
+    for p in model.cnn.vgg_16.convolution7.parameters():
+        p.requires_grad = True
+    for p in model.cnn.vgg_16.BatchNorm2.parameters():
+        p.requires_grad = True
+    for p in model.cnn.vgg_16.convolution6.parameters():
+        p.requires_grad = True
+
+    for p in model.rnn.rnn.Bidirectional_LSTM2.parameters():
+        p.requires_grad = True
+    for p in model.rnn.rnn.embedding2.parameters():
+        p.requires_grad = True
+    print(count_parameters(model))
+
+
+
+

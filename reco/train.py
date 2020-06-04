@@ -80,6 +80,7 @@ def trainBatch(net, criterion, optimizer, train_iter):
 
 
 if __name__ == '__main__':
+    torch.multiprocessing.set_start_method('spawn')
     if not os.path.exists(Config.model_dir):
         os.mkdir(Config.model_dir)
 
@@ -121,11 +122,11 @@ if __name__ == '__main__':
     criterion = CTCLoss()
 
     net = Net.CRNN(n_class)
-    print(net)
-
     #  引用参数
-    net.apply(lib.utility.weights_init)
+    net.load_state_dict(torch.load("../weights/crnn/netCRNN_4_48000.pth"))
 
+    print("this is pretrain model parameters:")
+    print(net.state_dict())
     image = torch.FloatTensor(Config.batch_size, 3, Config.img_height, Config.img_width)
     text = torch.IntTensor(Config.batch_size * 5)
     length = torch.IntTensor(Config.batch_size)
@@ -166,4 +167,4 @@ if __name__ == '__main__':
             # do checkpointing
             if i % Config.save_interval == 0:
                 torch.save(
-                    net.state_dict(), '{0}/netCRNN_{1}_{2}.pth'.format(Config.model_dir, epoch, i))
+                    net.state_dict(), '{0}/CRNN_{1}_{2}.pth'.format(Config.model_dir, epoch, i))
