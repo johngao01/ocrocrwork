@@ -5,3 +5,5 @@ __pycache__/
 /weights/
 /data/ocr/
 /reco/test_lmdb/
+/reco/runs/
+/reco/pretrain_train/
