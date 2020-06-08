@@ -53,7 +53,7 @@ def val(net, da, criterion, max_iter=100):
                     n_correct += 1
 
     accuracy = n_correct / float(max_iter * Config.batch_size)
-    print('Test loss: %f, accuray: %f' % (loss_avg.val(), accuracy))
+    print('Test loss: %f, accuracy: %f' % (loss_avg.val(), accuracy))
     return loss_avg.val(), accuracy
 
 
@@ -92,12 +92,15 @@ if __name__ == '__main__':
     random.seed(Config.random_seed)
     np.random.seed(Config.random_seed)
     torch.manual_seed(Config.random_seed)
+
     device = torch.device("cuda:0" if torch.cuda.is_available()
                           and Config.using_cuda else "cpu")
+
     train_dataset = lib.dataset.lmdbDataset(root=Config.train_data)
     test_dataset = lib.dataset.lmdbDataset(
         root=Config.test_data, transform=lib.dataset.resizeNormalize(
             (Config.img_width, Config.img_height)))
+
     assert train_dataset
 
     # images will be resize to 32*100
@@ -110,7 +113,10 @@ if __name__ == '__main__':
 
     n_class = len(Config.alphabet) + 1  # for python3
     # n_class = len(Config.alphabet.decode('utf-8')) + 1  # for python2
+
     print("alphabet class num is %s" % n_class)
+    print('epochs: ' + str(Config.epoch))
+    print('len of train_loader: ' + str(len(train_loader)))
     # 文字标签化
     converter = lib.convert.strLabelConverter(Config.alphabet)
 
@@ -142,6 +148,8 @@ if __name__ == '__main__':
     writer = SummaryWriter('runs/crnn')
     temp_input = torch.zeros((64, 1, 32, 168), device=device)
     writer.add_graph(net, temp_input)
+    best_accuracy = 0
+
     for epoch in range(Config.epoch):
         train_iter = iter(train_loader)
         i = 0
@@ -165,6 +173,7 @@ if __name__ == '__main__':
 
             if i % Config.test_interval == 0:
                 loss, accuracy = val(net, test_dataset, criterion)
+                best_accuracy = accuracy if accuracy > best_accuracy else best_accuracy
                 writer.add_scalar(
                     'test/loss', loss, epoch * len(train_loader) + i)
                 writer.add_scalar(
@@ -174,3 +183,12 @@ if __name__ == '__main__':
             if i % Config.save_interval == 0:
                 torch.save(
                     net.state_dict(), '{0}/CRNN_{1}_{2}.pth'.format(Config.model_dir, epoch, i))
+
+            if i - (len(train_loader)-1) == 0:
+                torch.save({
+                    'epoch': epoch,
+                    'model_state_dict': net.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'loss': loss_avg.val(),
+                    'accuracy': best_accuracy
+                }, Config.checkpoints_dir)

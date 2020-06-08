@@ -12,7 +12,7 @@ class Vgg_16(torch.nn.Module):
         self.pooling2 = torch.nn.MaxPool2d(2, stride=2)
         self.convolution3 = torch.nn.Conv2d(128, 256, 3, padding=1)
         self.convolution4 = torch.nn.Conv2d(256, 256, 3, padding=1)
-        self.pooling3 = torch.nn.MaxPool2d((1, 2), stride=(2, 1)) # notice stride of the non-square pooling
+        self.pooling3 = torch.nn.MaxPool2d((1, 2), stride=(2, 1))  # notice stride of the non-square pooling
         self.convolution5 = torch.nn.Conv2d(256, 512, 3, padding=1)
         self.BatchNorm1 = torch.nn.BatchNorm2d(512)
         self.convolution6 = torch.nn.Conv2d(512, 512, 3, padding=1)
@@ -46,8 +46,8 @@ class RNN(torch.nn.Module):
         self.embedding2 = torch.nn.Linear(hidden_unit * 2, class_num)
 
     def forward(self, x):
-        x = self.Bidirectional_LSTM1(x)   # LSTM output: output, (h_n, c_n)
-        T, b, h = x[0].size()   # x[0]: (seq_len, batch, num_directions * hidden_size)
+        x = self.Bidirectional_LSTM1(x)  # LSTM output: output, (h_n, c_n)
+        T, b, h = x[0].size()  # x[0]: (seq_len, batch, num_directions * hidden_size)
         x = self.embedding1(x[0].view(T * b, h))  # pytorch view() reshape as [T * b, nOut]
         x = x.view(T, b, -1)  # [16, b, 512]
         x = self.Bidirectional_LSTM2(x)
@@ -69,8 +69,8 @@ class CRNN(torch.nn.Module):
     def forward(self, x):
         x = self.cnn(x)
         b, c, h, w = x.size()
-        #print(x.size())  #: b,c,h,w,(64, 512, 1, 22)
-        assert h == 1   # "the height of conv must be 1"
+        # print(x.size())  #: b,c,h,w,(64, 512, 1, 22)
+        assert h == 1  # "the height of conv must be 1"
         x = x.squeeze(2)  # remove h dimension, b *512 * width
         x = x.permute(2, 0, 1)  # [w, b, c] = [seq_len, batch, input_size]
         # x = x.transpose(0, 2)
@@ -79,13 +79,15 @@ class CRNN(torch.nn.Module):
         # print(x.size())  # (22, 64, 6736)
         return x
 
+
 # count trainable parameters in model
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
+
 if __name__ == '__main__':
     model = CRNN(5000)
-    print(model)
+    print(model.state_dict())
 
     # freeze some parameters
     print(count_parameters(model))
@@ -104,7 +106,3 @@ if __name__ == '__main__':
     for p in model.rnn.rnn.embedding2.parameters():
         p.requires_grad = True
     print(count_parameters(model))
-
-
-
-
